@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client')
-
+const jwt = require('jsonwebtoken')
+let jwtSecretKey = process.env.JWT_SECRET_KEY;
 let urlAlphabet =
   'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 
@@ -64,6 +65,59 @@ createstudent: (req) => {
         }
     })
 },
+login: (req) => {
+    return new Promise(async function (resolve, reject) {
+      try {
+        const user = await prisma.student.findMany({
+            where: { student_email: req.body.student_email.toLowerCase() },
+        })
+        if (!user) {
+          return reject({
+            status: 404,
+            error: true,
+            code: "NO_USER_EXISTS",
+            message: "NO_USER_EXISTS",
+          });
+         } else {
+           req.body.password === user.password
+            const payload = {
+                id: user.id
+             };
+
+             const token = jwt.sign(
+                payload,
+                jwtSecretKey,{ expiresIn:500000})
+                  if (!token) {
+                    return reject({
+                      status: 501,
+                      error: true,
+                      code: "INTERNAL_SERVER_ERROR",
+                      message: messages["INTERNAL_SERVER_ERROR"],
+                    });
+                  }else{
+                  return resolve({
+                    status: 200,
+                    token: token,
+                    error: false,
+                    result: user,
+                    code: "LOGIN_SUCCESS",
+                    message:"LOGIN_SUCCESS",
+                  })
+                };
+            
+          }
+      }catch (err) {
+        console.log(err, "error")
+        return reject({
+            status: 500,
+            error: true,
+            result: err,
+            code: "INTERNAL_SERVER_ERROR",
+            message: "INTERNAL_SERVER_ERROR",
+        })
+    }
+})},
+
 getstudent: (req) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -152,7 +206,6 @@ getallstudent: (req) => {
     )
 },
 }
-
 
 
 

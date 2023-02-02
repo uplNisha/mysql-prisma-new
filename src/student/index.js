@@ -16,6 +16,19 @@ router.post("/", async (req, res) => {
             })
         })
 })
+router.post("/login", async (req, res) => {
+    student.login(req)
+        .then((response) => {
+            return res.send({
+                response
+            });
+        })
+        .catch((err) => {
+            return res.send({
+                err
+            })
+        })
+})
 
 router.get('/:id', async (req, res) => {
     student.getstudent(req)
