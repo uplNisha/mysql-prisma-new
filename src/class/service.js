@@ -53,11 +53,50 @@ module.exports = {
                         OR: [{ className: { contains: req.query.string } },
                         { classTeacherName: { contains: req.query.string } }]
                     }, include: {
-                        user: true
+                        Student: true
 
                     }
 
                 })
+
+                if (allcls?.length > 0) {
+                    return resolve({
+                        status: 200,
+                        error: false,
+                        result: allcls,
+                        code: "DATA_FOUND",
+                        message: "DATA_FOUND",
+                    })
+                } else {
+                    return reject({
+                        status: 404,
+                        error: true,
+                        code: "DATA_NOT_FOUND",
+                        message: "DATA_NOT_FOUND",
+                    })
+                }
+
+            } catch (err) {
+                console.log(err, "error")
+                return reject({
+                    status: 500,
+                    error: true,
+                    result: err,
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "INTERNAL_SERVER_ERROR",
+                })
+            }
+        }
+        )
+    },
+    getallcls: (req) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                const allcls = await prisma.class.findMany({ include: {
+                    Student: true
+
+                }})
 
                 if (allcls?.length > 0) {
                     return resolve({

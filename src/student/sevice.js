@@ -108,6 +108,49 @@ getstudent: (req) => {
     }
     )
 },
+getallstudent: (req) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            const all = await prisma.student.findMany({
+                 include: {
+                    class: true,
+                    stream:{select: { subject: true }
+                    }
+
+                }
+            })
+
+            if (all?.length > 0) {
+                return resolve({
+                    status: 200,
+                    error: false,
+                    result: all,
+                    code: "DATA_FOUND",
+                    message: "DATA_FOUND",
+                })
+            } else {
+                return reject({
+                    status: 404,
+                    error: true,
+                    code: "DATA_NOT_FOUND",
+                    message: "DATA_NOT_FOUND",
+                })
+            }
+
+        } catch (err) {
+            console.log(err, "error")
+            return reject({
+                status: 500,
+                error: true,
+                result: err,
+                code: "INTERNAL_SERVER_ERROR",
+                message: "INTERNAL_SERVER_ERROR",
+            })
+        }
+    }
+    )
+},
 }
 
 

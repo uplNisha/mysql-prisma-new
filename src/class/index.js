@@ -30,6 +30,19 @@ router.get('/', async (req, res) => {
             })
         })
 })
+router.get('/all', async (req, res) => {
+    cls.getallcls(req)
+        .then((response) => {
+            return res.send({
+                response
+            });
+        })
+        .catch((err) => {
+            return res.send({
+                err
+            })
+        })
+})
 router.put('/:id', async (req, res) => {
     cls.getupadatecls(req)
         .then((response) => {

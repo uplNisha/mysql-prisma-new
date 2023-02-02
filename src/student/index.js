@@ -30,6 +30,19 @@ router.get('/:id', async (req, res) => {
             })
         })
 })
+router.get('/', async (req, res) => {
+    student.getallstudent(req)
+        .then((response) => {
+            return res.send({
+                response
+            });
+        })
+        .catch((err) => {
+            return res.send({
+                err
+            })
+        })
+})
 
 
 module.exports = router;

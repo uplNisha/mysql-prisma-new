@@ -51,7 +51,54 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
 
-                const all = await prisma.subject.findMany({})
+                const allcls = await prisma.subject.findMany({
+                     where: { id: Number(req.params.id) },
+                    include: {
+                        stream: true
+
+                    }
+
+                })
+
+                if (allcls?.length > 0) {
+                    return resolve({
+                        status: 200,
+                        error: false,
+                        result: allcls,
+                        code: "DATA_FOUND",
+                        message: "DATA_FOUND",
+                    })
+                } else {
+                    return reject({
+                        status: 404,
+                        error: true,
+                        code: "DATA_NOT_FOUND",
+                        message: "DATA_NOT_FOUND",
+                    })
+                }
+
+            } catch (err) {
+                console.log(err, "error")
+                return reject({
+                    status: 500,
+                    error: true,
+                    result: err,
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "INTERNAL_SERVER_ERROR",
+                })
+            }
+        }
+        )
+    },
+    getallsubject: (req) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                const all = await prisma.subject.findMany({
+                    include: {
+                    stream: true
+                    }
+            })
 
                 if (all?.length > 0) {
                     return resolve({
@@ -82,44 +129,8 @@ module.exports = {
             }
         }
         )
-    },
-    getupadatecls: (req) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const update = await prisma.class.update({
-                    where: { id: Number(req.params.id) },
-                    data: { classTeacherName: req.body.classTeacherName }
-                })
-                if (update) {
-                    return resolve({
-                        status: 200,
-                        error: false,
-                        result: update,
-                        code: "DATA_FOUND",
-                        message: "DATA_UPDATED",
-                    })
-                } else {
-                    return reject({
-                        status: 404,
-                        error: true,
-                        code: "DATA_NOT_FOUND",
-                        message: "DATA_NOT_FOUND",
-                    })
-                }
-
-            } catch (err) {
-                console.log("User[006] error", err);
-                return reject({
-                    status: 500,
-                    error: true,
-                    result: err,
-                    code: "INTERNAL_SERVER_ERROR",
-                    message: "INTERNAL_SERVER_ERROR",
-                })
-            }
-        }
-        )
     }
+   
 
 
 }

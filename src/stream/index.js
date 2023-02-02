@@ -29,6 +29,19 @@ router.get('/:id', async (req, res) => {
                 err
             })
         })
+}),
+router.get('/', async (req, res) => {
+    stream.getallstream(req)
+        .then((response) => {
+            return res.send({
+                response
+            });
+        })
+        .catch((err) => {
+            return res.send({
+                err
+            })
+        })
 })
 
 

@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
         })
 })
 
-router.get('/', async (req, res) => {
+router.get('/:id', async (req, res) => {
     subject.getsubject(req)
         .then((response) => {
             return res.send({
@@ -30,6 +30,18 @@ router.get('/', async (req, res) => {
             })
         })
 })
-
+router.get('/', async (req, res) => {
+    subject.getallsubject(req)
+        .then((response) => {
+            return res.send({
+                response
+            });
+        })
+        .catch((err) => {
+            return res.send({
+                err
+            })
+        })
+})
 
 module.exports = router;

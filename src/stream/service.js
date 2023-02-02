@@ -91,20 +91,25 @@ module.exports = {
         }
         )
     },
-    getupadatecls: (req) => {
+    getallstream: (req) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const update = await prisma.class.update({
-                    where: { id: Number(req.params.id) },
-                    data: { classTeacherName: req.body.classTeacherName }
+
+                const allcls = await prisma.stream.findMany({
+                    include: {
+                        subject: true
+
+                    }
+
                 })
-                if (update) {
+
+                if (allcls?.length > 0) {
                     return resolve({
                         status: 200,
                         error: false,
-                        result: update,
+                        result: allcls,
                         code: "DATA_FOUND",
-                        message: "DATA_UPDATED",
+                        message: "DATA_FOUND",
                     })
                 } else {
                     return reject({
@@ -116,7 +121,7 @@ module.exports = {
                 }
 
             } catch (err) {
-                console.log("User[006] error", err);
+                console.log(err, "error")
                 return reject({
                     status: 500,
                     error: true,
@@ -128,6 +133,5 @@ module.exports = {
         }
         )
     }
-
 
 }
