@@ -23,19 +23,22 @@ model Class {
 
 model Student {
   id    Int     @id @default(autoincrement())
-  class   Class    @relation(fields: [classId], references: [id])
-  classId Int
+  class   Class?    @relation(fields: [classId], references: [id])
+  classId Int?
   student_name String
   student_email String  @unique
   password String
-  phone_no Int
-  gender String 
+  phone_no Int?
+  gender String?
   created_date DateTime @default(now())
   updated_date DateTime @updatedAt
-  stream stream    @relation(fields: [stream_id], references: [id])
-  stream_id Int
-
-
+  stream stream?    @relation(fields: [stream_id], references: [id])
+  stream_id Int?
+  role role @default(student)
+}
+enum role{
+  admin
+  student
 }
 model stream {
    id    Int     @id @default(autoincrement())

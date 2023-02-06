@@ -1,12 +1,15 @@
 const express = require('express');
 const routes = require('./src/route/route');
+const {seedDataCreate} = require('./src/utils/seedData');
 
 
 const port = 5000;
+seedDataCreate();
 
 const app = express();
 app.use(express.json());
-app.use("/api", routes);
+app.use("/api", routes); 
+
 
 const server = app.listen(port, () => {
     console.log(`

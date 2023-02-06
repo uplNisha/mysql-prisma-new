@@ -28,7 +28,8 @@ module.exports = {
                         password: nanoid(t = 21),
                         phone_no: req.body.phone_no,
                         gender: req.body.gender,
-                        stream_id: req.body.stream_id
+                        stream_id: req.body.stream_id,
+                        role:req.body.role
 
 
                     }
@@ -68,9 +69,10 @@ module.exports = {
     login: (req) => {
         return new Promise(async function (resolve, reject) {
             try {
-                const user = await prisma.student.findMany({
+                const user = await prisma.student.findFirst({
                     where: { student_email: req.body.student_email.toLowerCase() },
                 })
+                console.log(user,"user")
                 if (!user) {
                     return reject({
                         status: 404,
@@ -79,10 +81,13 @@ module.exports = {
                         message: "NO_USER_EXISTS",
                     });
                 } else {
-                    req.body.password === user.password
-                    const payload = {
-                        id: user.id
+                    console.log(user.password,"pass")
+                    if(req.body.password === user.password){
+                        const payload = {
+                        id: user.id,
+                        role: user.role,
                     };
+                    console.log(payload,"payload")
 
                     const token = jwt.sign(
                         payload,
@@ -92,7 +97,7 @@ module.exports = {
                             status: 501,
                             error: true,
                             code: "INTERNAL_SERVER_ERROR",
-                            message: messages["INTERNAL_SERVER_ERROR"],
+                            message: "INTERNAL_SERVER_ERROR",
                         });
                     } else {
                         return resolve({
@@ -103,7 +108,16 @@ module.exports = {
                             code: "LOGIN_SUCCESS",
                             message: "LOGIN_SUCCESS",
                         })
-                    };
+                    }}else{
+                        return reject({
+                            status: 400,
+                            error: true,
+                            code: "WRONG PASSWORD",
+                            message: "WRONG PASSWORD",
+                        })
+                        
+                    }
+                    
 
                 }
             } catch (err) {
@@ -122,8 +136,9 @@ module.exports = {
     getstudent: (req) => {
         return new Promise(async (resolve, reject) => {
             try {
-
-                const all = await prisma.student.findMany({
+                console.log(req.user.role,"role");
+                if (req.user.role === 'admin'){
+                     const all = await prisma.student.findMany({
                     where: { id: Number(req.params.id) },
                     include: {
                         class: true,
@@ -149,7 +164,17 @@ module.exports = {
                         code: "DATA_NOT_FOUND",
                         message: "DATA_NOT_FOUND",
                     })
+                }}else{
+                    return reject({
+                        status: 400,
+                        error: true,
+                        code: "UNAUTHORIZED",
+                        message: "UNAUTHORIZED",
+                    })
+
                 }
+
+               
 
             } catch (err) {
                 console.log(err, "error")
